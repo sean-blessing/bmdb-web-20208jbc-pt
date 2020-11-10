@@ -44,30 +44,25 @@ public class CreditController {
 	public Credit addCredit(@RequestBody Credit a) {
 		return creditRepo.save(a);
 	}
-	/*	
+	
 	// update a credit
-	@PutMapping("/{id}")
-	public Credit updateCredit(@RequestBody Credit a, @PathVariable int id) {
-		if (id == a.getId()) {
-			return creditRepo.save(a);
-		}
-		else {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Credit id does not match.");
-		}
+	@PutMapping("/")
+	public Credit updateCredit(@RequestBody Credit a) {
+		return creditRepo.save(a);
 	}
 	
 	// delete a credit
 	@DeleteMapping("/{id}")
 	public Optional<Credit> deleteCredit(@PathVariable int id) {
-		Optional<Credit> a = creditRepo.findById(id);
-		if (a.isPresent()) {
+		Optional<Credit> c = creditRepo.findById(id);
+		if (c.isPresent()) {
 			creditRepo.deleteById(id);
 		}
 		else {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Credit not found.");
 		}
-		return a;
+		return c;
 	}
-	*/
+	
 	
 }
