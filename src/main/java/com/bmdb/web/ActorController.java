@@ -4,70 +4,67 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
-import com.bmdb.business.Movie;
-import com.bmdb.db.MovieRepo;
+import com.bmdb.business.Actor;
+import com.bmdb.db.ActorRepo;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/movies")
+@RequestMapping("/actors")
 public class ActorController {
-	/*
-	 *  A controller will implement 5 CRUD methods:
-	 *  1) GET ALL
-	 *  2) GET BY ID
-	 *  3) POST - Insert / Create
-	 *  4) PUT - Update
-	 *  5) DELETE - Delete
-	 */
 	
 	@Autowired
-	private MovieRepo movieRepo;
+	private ActorRepo actorRepo;
 	
-	//Get all movies
-	@GetMapping("/")
-	public List<Movie> getAll() {
-		return movieRepo.findAll();
+	// list all actors
+	@GetMapping("")
+	public List<Actor> getAllActors() {
+		return actorRepo.findAll();
 	}
 	
-	//Get a movie by id
+	// get actor by id
 	@GetMapping("/{id}")
-	public Optional<Movie> getById(@PathVariable int id) {
-		return movieRepo.findById(id);
-	}
-	
-	//Add a movie
-	@PostMapping("/")
-	public Movie addMovie(@RequestBody Movie m) {
-		m = movieRepo.save(m);
-		return m;
-	}
-	
-	//Update a movie
-	@PutMapping("/")
-	public Movie updateMovie(@RequestBody Movie m) {
-		m = movieRepo.save(m);
-		return m;
-	}
-	
-	//Delete a movie
-	@DeleteMapping("/{id}")
-	public Movie deleteMovie(@PathVariable int id) {
-		//Optional type will wrap a movie
-		Optional<Movie> m = movieRepo.findById(id);
-		//isPresent() will return true if a movie was found
-		if (m.isPresent()) {
-			movieRepo.deleteById(id);
+	public Optional<Actor> getActor(@PathVariable int id) {
+		Optional<Actor> a = actorRepo.findById(id);
+		if (a.isPresent()) {
+			return a;
 		}
 		else {
-			System.out.println("Error - movie not found for id "+id);
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Actor not found");
 		}
-		return m.get();
 	}
 	
+	// add a actor
+	@PostMapping("/")
+	public Actor addActor(@RequestBody Actor a) {
+		return actorRepo.save(a);
+	}
 	
+	// update a actor
+	@PutMapping("/{id}")
+	public Actor updateActor(@RequestBody Actor a, @PathVariable int id) {
+		if (id == a.getId()) {
+			return actorRepo.save(a);
+		}
+		else {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Actor id does not match.");
+		}
+	}
 	
+	// delete a actor
+	@DeleteMapping("/{id}")
+	public Optional<Actor> deleteActor(@PathVariable int id) {
+		Optional<Actor> a = actorRepo.findById(id);
+		if (a.isPresent()) {
+			actorRepo.deleteById(id);
+		}
+		else {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Actor not found.");
+		}
+		return a;
+	}
 	
-
 }
