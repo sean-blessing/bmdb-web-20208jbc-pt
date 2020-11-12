@@ -1,5 +1,6 @@
 package com.bmdb.web;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -66,5 +67,37 @@ public class ActorController {
 		}
 		return a;
 	}
+	
+	// list all actors by gender
+	// using RequestParam to pass gender
+	@GetMapping("/find-by-gender")
+	public List<Actor> getActorsByGender(@RequestParam String gender) {
+		return actorRepo.findByGender(gender);
+	}
+	
+	// list all actors whose last name starts with 'letter'
+	@GetMapping("/find-lastname-starts-with")
+	public List<Actor> getActorsLastNameStarts(@RequestParam String letter) {
+		return actorRepo.findByLastNameLike(letter+"%");
+	}
+	
+	// list all actors born between d1 and d2
+	@GetMapping("/find-by-birthdate-between")
+	public List<Actor> getActorsByBirthDateBetween(@RequestParam String d1, @RequestParam String d2) {
+		LocalDate ld1 = LocalDate.parse(d1);
+		LocalDate ld2 = LocalDate.parse(d2);
+		
+		return actorRepo.findByBirthDateBetween(ld1, ld2);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 }
