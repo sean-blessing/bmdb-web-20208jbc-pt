@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -82,10 +83,15 @@ public class ActorController {
 	}
 	
 	// list all actors born between d1 and d2
+	// Note:  this uses some additional annotations on the incoming request parameters.
+	// This is necessary because, by default, Spring cannot convert string parameters
+	// from your request into LocalDate objects.
 	@GetMapping("/find-by-birthdate-between")
-	public List<Actor> getActorsByBirthDateBetween(@RequestParam String d1, @RequestParam String d2) {
-		LocalDate ld1 = LocalDate.parse(d1);
-		LocalDate ld2 = LocalDate.parse(d2);
+	public List<Actor> getActorsByBirthDateBetween(@RequestParam("ld1") 
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate ld1, @RequestParam("ld2") 
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate ld2) {
+		//LocalDate ld1 = LocalDate.parse(d1);
+		//LocalDate ld2 = LocalDate.parse(d2);
 		
 		return actorRepo.findByBirthDateBetween(ld1, ld2);
 	}
