@@ -69,7 +69,15 @@ public class UserController {
 	//Login
 	@PostMapping("/login")
 	public Optional<User> login(@RequestBody User user) {
-		return userRepo.findByUsernameAndPassword(user.getUsername(), user.getPassword());
+		try {
+			//if authrorizedUser is null then we know it was an invalid login
+			return userRepo.findByUsernameAndPassword(user.getUsername(), user.getPassword());
+		}
+		catch (Exception e) {
+			System.err.println("Error during login");
+			e.printStackTrace();
+			throw e;
+		}
 	}
 	
 	
