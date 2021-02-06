@@ -46,14 +46,9 @@ public class ActorController {
 	}
 	
 	// update a actor
-	@PutMapping("/{id}")
-	public Actor updateActor(@RequestBody Actor a, @PathVariable int id) {
-		if (id == a.getId()) {
-			return actorRepo.save(a);
-		}
-		else {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Actor id does not match.");
-		}
+	@PutMapping("/")
+	public Actor updateActor(@RequestBody Actor a) {
+		return actorRepo.save(a);
 	}
 	
 	// delete a actor
