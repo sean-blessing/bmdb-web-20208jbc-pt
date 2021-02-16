@@ -4,7 +4,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.bmdb.business.Movie;
 import com.bmdb.db.MovieRepo;
@@ -58,7 +61,15 @@ public class MovieController {
 		Optional<Movie> m = movieRepo.findById(id);
 		//isPresent() will return true if a movie was found
 		if (m.isPresent()) {
-			movieRepo.deleteById(id);
+			// send msg back to front end
+			try {
+				movieRepo.deleteById(id);
+			}
+			catch (DataIntegrityViolationException dive) {
+				// catch dive when movie exists as fk on another table
+				System.err.println(dive.getRootCause().getMessage());
+				throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Foreign Key Constraint Issue - Movie id " + id + " is refered to elsewhere.");
+			}
 		}
 		else {
 			System.out.println("Error - movie not found for id "+id);
