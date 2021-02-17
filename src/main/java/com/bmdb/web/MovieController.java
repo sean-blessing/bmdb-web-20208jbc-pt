@@ -70,6 +70,10 @@ public class MovieController {
 				System.err.println(dive.getRootCause().getMessage());
 				throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Foreign Key Constraint Issue - Movie id " + id + " is refered to elsewhere.");
 			}
+			catch (Exception e) {
+				e.printStackTrace();
+				throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Exception caught during Movie delete.");				
+			}
 		}
 		else {
 			System.out.println("Error - movie not found for id "+id);
