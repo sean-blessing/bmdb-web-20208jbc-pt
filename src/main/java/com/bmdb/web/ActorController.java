@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -56,7 +57,18 @@ public class ActorController {
 	public Optional<Actor> deleteActor(@PathVariable int id) {
 		Optional<Actor> a = actorRepo.findById(id);
 		if (a.isPresent()) {
-			actorRepo.deleteById(id);
+			try {
+				actorRepo.deleteById(id);
+			}
+			catch (DataIntegrityViolationException dive) {
+				// catch dive when actor exists as fk on another table
+				System.err.println(dive.getRootCause().getMessage());
+				throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Foreign Key Constraint Issue - Actor id " + id + " is refered to elsewhere.");
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Exception caught during Actor delete.");				
+			}
 		}
 		else {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Actor not found.");
